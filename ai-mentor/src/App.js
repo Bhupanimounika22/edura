@@ -11,6 +11,7 @@ import Header from './components/layout/Header';
 import ForgotPassword from './components/auth/ForgotPassword';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
+import SocialAuthSuccess from './components/auth/SocialAuthSuccess';
 
 // Main Components
 import Dashboard from './components/dashboard/Dashboard';
@@ -60,6 +61,7 @@ function AppContent() {
             <Route path="/register" element={currentUser ? <Navigate to="/dashboard" /> : <Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/about" element={<About />} />
+            <Route path="/social-auth-success" element={<SocialAuthSuccess />} />
             
             {/* Protected Routes */}
             <Route path="/onboarding" element={

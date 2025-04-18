@@ -1,4 +1,5 @@
-import React, { createContext, useEffect, useState } from 'react';
+import React, { createContext, useEffect, useState } from "react";
+import { getCurrentUser, loginUser, registerUser, logoutUser, setAuthToken, updateUserProfile } from "../services/authService";
 
 export const AuthContext = createContext();
 
@@ -7,36 +8,74 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user data exists in localStorage
-    const userData = localStorage.getItem('user');
-    if (userData) {
-      setCurrentUser(JSON.parse(userData));
-    }
-    setLoading(false);
+    const loadUser = async () => {
+      try {
+        // Check if token exists
+        const token = localStorage.getItem("token");
+        if (token) {
+          setAuthToken(token);
+          const userData = await getCurrentUser();
+          if (userData) {
+            setCurrentUser(userData);
+          }
+        }
+      } catch (error) {
+        console.error("Error loading user:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadUser();
   }, []);
 
   // Login function
-  const login = (userData) => {
-    // In a real app, you would validate credentials with an API
-    // For demo purposes, we'll just store the user data
-    localStorage.setItem('user', JSON.stringify(userData));
-    setCurrentUser(userData);
-    return true;
+  const login = async (email, password) => {
+    try {
+      const data = await loginUser(email, password);
+      const userData = await getCurrentUser();
+      setCurrentUser(userData);
+      return userData;
+    } catch (error) {
+      throw error;
+    }
   };
 
   // Register function
-  const register = (userData) => {
-    // In a real app, you would send registration data to an API
-    // For demo purposes, we'll just store the user data
-    localStorage.setItem('user', JSON.stringify(userData));
-    setCurrentUser(userData);
-    return true;
+  const register = async (userData) => {
+    try {
+      await registerUser(userData);
+      const user = await getCurrentUser();
+      setCurrentUser(user);
+      return user;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  // Update profile function
+  const updateProfile = async (profileData) => {
+    try {
+      const updatedUser = await updateUserProfile(profileData);
+      setCurrentUser(updatedUser);
+      return updatedUser;
+    } catch (error) {
+      throw error;
+    }
   };
 
   // Logout function
   const logout = () => {
-    localStorage.removeItem('user');
+    logoutUser();
     setCurrentUser(null);
+    setAuthToken(null);
+  };
+
+  // Demo login function (for backward compatibility)
+  const demoLogin = (userData) => {
+    localStorage.setItem("user", JSON.stringify(userData));
+    setCurrentUser(userData);
+    return true;
   };
 
   const value = {
@@ -44,12 +83,14 @@ export const AuthProvider = ({ children }) => {
     login,
     register,
     logout,
+    updateProfile,
+    demoLogin,
     loading
   };
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 };

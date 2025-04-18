@@ -1,9 +1,9 @@
 import {
-  faHandshake,
-  faLightbulb,
-  faRoad,
-  faRobot,
-  faUsers
+    faHandshake,
+    faLightbulb,
+    faRoad,
+    faRobot,
+    faUsers
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
@@ -11,11 +11,13 @@ import { Button, Card, Col, Container, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import './About.css';
 
-// Import team images
-import teamMember1 from '../../assets/images/team-1.jpg';
-import teamMember2 from '../../assets/images/team-2.jpg';
-import teamMember3 from '../../assets/images/team-3.jpg';
-import teamMember4 from '../../assets/images/team-4.jpg';
+// Import placeholder team images
+import {
+    team1 as teamMember1,
+    team2 as teamMember2,
+    team3 as teamMember3,
+    team4 as teamMember4
+} from '../../assets/images/placeholder';
 
 const About = () => {
   const team = [

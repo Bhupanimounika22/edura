@@ -16,7 +16,7 @@ const Footer = () => {
           <Col lg={4} md={6} className="mb-4 mb-md-0">
             <div className="d-flex align-items-center mb-3">
               <FontAwesomeIcon icon={faRobot} className="me-2 text-primary" size="2x" />
-              <h5 className="mb-0 brand-text">AI Mentor</h5>
+              <h5 className="mb-0 brand-text">Edura</h5>
             </div>
             <p className="text-muted">
               Your personalized AI career guide. Get customized roadmaps, job recommendations, and learning resources tailored to your interests and goals.

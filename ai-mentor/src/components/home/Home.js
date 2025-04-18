@@ -18,11 +18,13 @@ import { Button, Card, Col, Container, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import './Home.css';
 
-// Import images
-import heroImage from '../../assets/images/hero-image.png';
-import testimonial1 from '../../assets/images/testimonial-1.jpg';
-import testimonial2 from '../../assets/images/testimonial-2.jpg';
-import testimonial3 from '../../assets/images/testimonial-3.jpg';
+// Import placeholder images
+import {
+    heroImage,
+    testimonial1,
+    testimonial2,
+    testimonial3
+} from '../../assets/images/placeholder';
 
 const Home = () => {
   const features = [

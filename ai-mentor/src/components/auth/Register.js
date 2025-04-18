@@ -49,19 +49,17 @@ const Register = () => {
         throw new Error('Password must be at least 6 characters long');
       }
       
-      // For demo purposes, we'll simulate a successful registration
-      // In a real app, you would call an API endpoint
+      // Call the register function from AuthContext which uses our API
       const userData = {
-        id: Date.now().toString(),
         name: formData.name,
         email: formData.email,
-        role: 'user'
+        password: formData.password
       };
       
-      register(userData);
+      await register(userData);
       navigate('/onboarding');
     } catch (error) {
-      setError(error.message);
+      setError(error.msg || error.message || 'Registration failed');
     } finally {
       setLoading(false);
     }
@@ -188,16 +186,16 @@ const Register = () => {
                 
                 <Row className="social-buttons mb-4">
                   <Col xs={6}>
-                    <Button variant="outline-danger" className="w-100">
+                    <a href="http://localhost:5000/api/auth/google" className="btn btn-outline-danger w-100">
                       <FontAwesomeIcon icon={faGoogle} className="me-2" />
                       Google
-                    </Button>
+                    </a>
                   </Col>
                   <Col xs={6}>
-                    <Button variant="outline-primary" className="w-100">
+                    <a href="http://localhost:5000/api/auth/linkedin" className="btn btn-outline-primary w-100">
                       <FontAwesomeIcon icon={faLinkedin} className="me-2" />
                       LinkedIn
-                    </Button>
+                    </a>
                   </Col>
                 </Row>
               </Form>
