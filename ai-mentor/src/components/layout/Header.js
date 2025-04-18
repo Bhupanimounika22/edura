@@ -1,3 +1,4 @@
+
 import { faCog, faRobot, faSignOutAlt, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useContext } from 'react';
@@ -20,7 +21,7 @@ const Header = () => {
       <Container>
         <Navbar.Brand as={Link} to="/" className="d-flex align-items-center">
           <FontAwesomeIcon icon={faRobot} className="me-2 text-primary" size="lg" />
-          <span className="brand-text">AI Mentor</span>
+          <span className="brand-text">Edura</span>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
