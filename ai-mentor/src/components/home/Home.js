@@ -1,32 +1,35 @@
 import {
-    faBriefcase,
-    faChartBar,
-    faChartLine,
-    faDatabase,
-    faGraduationCap,
-    faLaptopCode,
-    faMobileAlt,
-    faPalette,
-    faRoad,
-    faRobot,
-    faServer,
-    faUsers
+  faBriefcase,
+  faChartBar,
+  faChartLine,
+  faDatabase,
+  faGraduationCap,
+  faLaptopCode,
+  faMobileAlt,
+  faPalette,
+  faRoad,
+  faRobot,
+  faServer,
+  faUsers
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React from 'react';
+import React, { useContext } from 'react';
 import { Button, Card, Col, Container, Row } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../contexts/AuthContext';
 import './Home.css';
 
 // Import placeholder images
 import {
-    heroImage,
-    testimonial1,
-    testimonial2,
-    testimonial3
+  heroImage,
+  testimonial1,
+  testimonial2,
+  testimonial3
 } from '../../assets/images/placeholder';
 
 const Home = () => {
+  const { currentUser } = useContext(AuthContext);
+  const navigate = useNavigate();
   const features = [
     {
       icon: faRoad,
@@ -45,7 +48,7 @@ const Home = () => {
     },
     {
       icon: faChartLine,
-      title: 'Progress Tracking',
+      title: 'Career Advisor',
       description: 'Monitor your learning journey with detailed progress tracking and milestone achievements.'
     }
   ];

@@ -14,20 +14,25 @@ import Register from './components/auth/Register';
 import SocialAuthSuccess from './components/auth/SocialAuthSuccess';
 
 // Main Components
-import Dashboard from './components/dashboard/Dashboard';
 import About from './components/home/About';
 import Home from './components/home/Home';
 import Onboarding from './components/home/Onboarding';
-import JobDetail from './components/jobs/JobDetail';
-import Jobs from './components/jobs/Jobs';
+import JobDetail from './components/jobs/JobDetailNew';
+import Jobs from './components/jobs/JobsNew';
 import NotFound from './components/layout/NotFound';
 import Profile from './components/profile/Profile';
 import Resources from './components/resources/Resources';
 import Roadmap from './components/roadmap/Roadmap';
 import RoadmapDetail from './components/roadmap/RoadmapDetail';
+import RoadmapPage from './components/roadmap/RoadmapPage';
+
+import CareerPage from './pages/CareerPage';
+ 
 
 // Context
+import { AIChatProvider } from './contexts/AIChatContext';
 import { AuthContext, AuthProvider } from './contexts/AuthContext';
+import { RoadmapProvider } from './contexts/RoadmapContext';
 
 // Protected route component
 const ProtectedRoute = ({ children }) => {
@@ -46,6 +51,21 @@ const ProtectedRoute = ({ children }) => {
   return currentUser ? children : <Navigate to="/login" />;
 };
 
+// Note: We're keeping this component for future use but not currently using it
+// If you need to use it later, remove the eslint comment
+// eslint-disable-next-line no-unused-vars
+const DemoAwareRoute = ({ component: Component, redirectPath }) => {
+  const { currentUser } = useContext(AuthContext);
+  
+  // If user is a demo user, redirect to the specified path
+  if (currentUser && currentUser.role === 'demo') {
+    return <Navigate to={redirectPath} replace />;
+  }
+  
+  // Otherwise, render the component
+  return <Component />;
+};
+
 function AppContent() {
   const { currentUser } = useContext(AuthContext);
 
@@ -57,8 +77,8 @@ function AppContent() {
           <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Home />} />
-            <Route path="/login" element={currentUser ? <Navigate to="/dashboard" /> : <Login />} />
-            <Route path="/register" element={currentUser ? <Navigate to="/dashboard" /> : <Register />} />
+            <Route path="/login" element={currentUser ? <Navigate to="/roadmap-generator" /> : <Login />} />
+            <Route path="/register" element={currentUser ? <Navigate to="/roadmap-generator" /> : <Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/about" element={<About />} />
             <Route path="/social-auth-success" element={<SocialAuthSuccess />} />
@@ -69,11 +89,7 @@ function AppContent() {
                 <Onboarding />
               </ProtectedRoute>
             } />
-            <Route path="/dashboard" element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } />
+
             <Route path="/roadmap/:id" element={
               <ProtectedRoute>
                 <RoadmapDetail />
@@ -82,6 +98,11 @@ function AppContent() {
             <Route path="/roadmap" element={
               <ProtectedRoute>
                 <Roadmap />
+              </ProtectedRoute>
+            } />
+            <Route path="/roadmap-generator" element={
+              <ProtectedRoute>
+                <RoadmapPage />
               </ProtectedRoute>
             } />
             <Route path="/jobs/:id" element={
@@ -105,6 +126,17 @@ function AppContent() {
               </ProtectedRoute>
             } />
             
+            {/* Career Advisor Route */}
+            <Route path="/career-advisor" element={
+              <ProtectedRoute>
+                <CareerPage />
+              </ProtectedRoute>
+            } />
+            
+
+            
+          
+            
             {/* 404 Route */}
             <Route path="*" element={<NotFound />} />
           </Routes>
@@ -118,7 +150,11 @@ function AppContent() {
 function App() {
   return (
     <AuthProvider>
-      <AppContent />
+      <AIChatProvider>
+        <RoadmapProvider>
+          <AppContent />
+        </RoadmapProvider>
+      </AIChatProvider>
     </AuthProvider>
   );
 }

@@ -1,43 +1,121 @@
-import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Form, Button, InputGroup, Badge, Nav } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faSearch, faFilter, faMapMarkerAlt, faClock, 
-  faBookmark, faDollarSign, faBuilding, faExternalLinkAlt
+import {
+  faBookmark,
+  faClock,
+  faDollarSign,
+  faExternalLinkAlt,
+  faFilter, faMapMarkerAlt,
+  faSearch
 } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useEffect, useState } from 'react';
+import { Badge, Button, Card, Col, Container, Form, InputGroup, Nav, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { jobs } from '../../data/dashboardData';
-import { internships } from '../../data/internshipsData';
+import { fetchJobs } from '../../services/jobService';
 import './Jobs.css';
 
 const Jobs = () => {
-  const [activeTab, setActiveTab] = useState('jobs');
+  const [activeTab, setActiveTab] = useState('all');
+  const [allJobs, setAllJobs] = useState([]);
   const [filteredJobs, setFilteredJobs] = useState([]);
-  const [filteredInternships, setFilteredInternships] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [savedJobs, setSavedJobs] = useState([]);
   const [filters, setFilters] = useState({
-    search: '',
+    role: '',
     location: '',
     remote: false,
     type: '',
     experience: '',
-    salary: ''
+    source: ''
   });
   
+  // Popular job roles for quick filtering
+  const popularRoles = [
+    'Software Engineer',
+    'Data Scientist',
+    'Product Manager',
+    'UX Designer',
+    'DevOps Engineer',
+    'Frontend Developer',
+    'Backend Developer',
+    'Full Stack Developer',
+    'Machine Learning Engineer'
+  ];
+  
+  // Popular locations for quick filtering
+  const popularLocations = [
+    'Remote',
+    'San Francisco',
+    'New York',
+    'Seattle',
+    'Austin',
+    'Boston',
+    'London',
+    'Berlin',
+    'Toronto'
+  ];
+  
+  // Job sources for filtering
+  const jobSources = [
+    'LinkedIn',
+    'Indeed',
+    'Glassdoor',
+    'AngelList',
+    'Hired',
+    'Stack Overflow'
+  ];
+  
   useEffect(() => {
-    // In a real app, you would fetch jobs from an API
-    // For demo purposes, we'll use the imported data
-    setTimeout(() => {
-      setFilteredJobs(jobs);
-      setFilteredInternships(internships);
-      setLoading(false);
-    }, 1000);
+    loadJobs();
     
-    // Load saved jobs from localStorage in a real app
-    // For demo purposes, we'll just use an empty array
-    setSavedJobs([1, 3]); // IDs of saved jobs
+    // Load saved jobs from localStorage
+    const savedJobsFromStorage = JSON.parse(localStorage.getItem('savedJobs') || '[]');
+    setSavedJobs(savedJobsFromStorage);
   }, []);
+  
+  const loadJobs = async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      console.log('Attempting to load jobs from API...');
+      const jobsData = await fetchJobs();
+      
+      // Check if we got valid data
+      if (Array.isArray(jobsData) && jobsData.length > 0) {
+        console.log(`Successfully loaded ${jobsData.length} jobs from API`);
+        setAllJobs(jobsData);
+        setFilteredJobs(jobsData);
+      } else {
+        console.warn('Received empty or invalid jobs data:', jobsData);
+        throw new Error('No jobs data available');
+      }
+    } catch (err) {
+      console.error('Error loading jobs:', err);
+      
+      // Try to load again with explicit fallback
+      try {
+        console.log('Attempting to load jobs with explicit fallback...');
+        const fallbackJobsData = await fetchJobs({ fallback: true });
+        
+        if (Array.isArray(fallbackJobsData) && fallbackJobsData.length > 0) {
+          console.log(`Successfully loaded ${fallbackJobsData.length} fallback jobs`);
+          setAllJobs(fallbackJobsData);
+          setFilteredJobs(fallbackJobsData);
+          // If we get here, we succeeded with the fallback but should still show a warning
+          setError('Using sample job data. Some features may be limited.');
+        } else {
+          console.error('Fallback data is invalid:', fallbackJobsData);
+          throw new Error('Failed to load fallback jobs data');
+        }
+      } catch (fallbackErr) {
+        console.error('Fallback job loading also failed:', fallbackErr);
+        setError('Failed to load jobs. Please try again later.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
   
   const handleFilterChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -47,15 +125,39 @@ const Jobs = () => {
     });
   };
   
-  const applyFilters = () => {
+  const applyFilters = async () => {
     setLoading(true);
+    setError(null);
     
-    // Filter jobs
-    const jobResults = jobs.filter(job => {
-      // Search filter
-      if (filters.search && !job.title.toLowerCase().includes(filters.search.toLowerCase()) && 
-          !job.company.toLowerCase().includes(filters.search.toLowerCase()) &&
-          !job.skills.some(skill => skill.toLowerCase().includes(filters.search.toLowerCase()))) {
+    try {
+      // If we have specific filters, fetch new jobs with those filters
+      if (filters.role || filters.location || filters.type || filters.experience) {
+        try {
+          const jobsData = await fetchJobs(filters);
+          setAllJobs(jobsData);
+          setFilteredJobs(jobsData);
+        } catch (fetchErr) {
+          console.error('Error fetching filtered jobs:', fetchErr);
+          // If fetching fails, try to filter existing jobs instead of showing an error
+          console.log('Falling back to filtering existing jobs');
+          filterExistingJobs();
+        }
+      } else {
+        // Otherwise, filter the existing jobs
+        filterExistingJobs();
+      }
+    } catch (err) {
+      console.error('Error applying filters:', err);
+      setError('Failed to apply filters. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const filterExistingJobs = () => {
+    const filtered = allJobs.filter(job => {
+      // Role/title filter
+      if (filters.role && !job.title.toLowerCase().includes(filters.role.toLowerCase())) {
         return false;
       }
       
@@ -64,61 +166,123 @@ const Jobs = () => {
         return false;
       }
       
+      // Type filter
+      if (filters.type && job.type.toLowerCase() !== filters.type.toLowerCase()) {
+        return false;
+      }
+      
       // Remote filter
-      if (filters.remote && !job.remote) {
+      if (filters.remote && !job.location.toLowerCase().includes('remote')) {
         return false;
       }
       
-      // Job type filter
-      if (filters.type && job.type !== filters.type) {
+      // Source filter
+      if (filters.source && job.source !== filters.source) {
         return false;
       }
       
-      return true;
-    });
-    
-    // Filter internships
-    const internshipResults = internships.filter(internship => {
-      // Search filter
-      if (filters.search && !internship.title.toLowerCase().includes(filters.search.toLowerCase()) && 
-          !internship.company.toLowerCase().includes(filters.search.toLowerCase()) &&
-          !internship.skills.some(skill => skill.toLowerCase().includes(filters.search.toLowerCase()))) {
-        return false;
-      }
-      
-      // Location filter
-      if (filters.location && !internship.location.toLowerCase().includes(filters.location.toLowerCase())) {
+      // Type filter (for internships tab)
+      if (activeTab === 'internships' && job.type.toLowerCase() !== 'internship') {
         return false;
       }
       
       return true;
     });
     
-    setFilteredJobs(jobResults);
-    setFilteredInternships(internshipResults);
-    setLoading(false);
+    setFilteredJobs(filtered);
+    
+    // If no jobs match the filters, log this for debugging
+    if (filtered.length === 0) {
+      console.log('No jobs match the current filters:', filters);
+    }
   };
   
   const resetFilters = () => {
     setFilters({
-      search: '',
+      role: '',
       location: '',
       remote: false,
       type: '',
       experience: '',
-      salary: ''
+      source: ''
     });
     
-    setFilteredJobs(jobs);
-    setFilteredInternships(internships);
+    setFilteredJobs(allJobs);
   };
   
   const toggleSaveJob = (jobId) => {
+    let updatedSavedJobs;
+    
     if (savedJobs.includes(jobId)) {
-      setSavedJobs(savedJobs.filter(id => id !== jobId));
+      updatedSavedJobs = savedJobs.filter(id => id !== jobId);
     } else {
-      setSavedJobs([...savedJobs, jobId]);
+      updatedSavedJobs = [...savedJobs, jobId];
     }
+    
+    setSavedJobs(updatedSavedJobs);
+    localStorage.setItem('savedJobs', JSON.stringify(updatedSavedJobs));
+  };
+  
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    
+    if (tab === 'all') {
+      setFilteredJobs(allJobs);
+    } else if (tab === 'internships') {
+      const internships = allJobs.filter(job => 
+        job.type.toLowerCase() === 'internship'
+      );
+      setFilteredJobs(internships);
+    } else if (tab === 'saved') {
+      const saved = allJobs.filter(job => 
+        savedJobs.includes(job.id)
+      );
+      setFilteredJobs(saved);
+    }
+  };
+  
+  const handleQuickFilterClick = (filterType, value) => {
+    const newFilters = { ...filters, [filterType]: value };
+    setFilters(newFilters);
+    
+    // Apply the filter immediately
+    setLoading(true);
+    setError(null);
+    
+    setTimeout(async () => {
+      try {
+        try {
+          const jobsData = await fetchJobs(newFilters);
+          setAllJobs(jobsData);
+          setFilteredJobs(jobsData);
+        } catch (fetchErr) {
+          console.error('Error fetching jobs with quick filter:', fetchErr);
+          // If fetching fails, apply filters to existing jobs
+          console.log('Falling back to filtering existing jobs for quick filter');
+          // First update the filters
+          setFilters(newFilters);
+          // Then filter the existing jobs
+          const filtered = allJobs.filter(job => {
+            if (filterType === 'role' && !job.title.toLowerCase().includes(value.toLowerCase())) {
+              return false;
+            }
+            if (filterType === 'location' && !job.location.toLowerCase().includes(value.toLowerCase())) {
+              return false;
+            }
+            if (filterType === 'type' && job.type.toLowerCase() !== value.toLowerCase()) {
+              return false;
+            }
+            return true;
+          });
+          setFilteredJobs(filtered);
+        }
+      } catch (err) {
+        console.error('Error applying quick filter:', err);
+        setError('Failed to apply filter. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    }, 500);
   };
   
   return (

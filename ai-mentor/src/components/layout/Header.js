@@ -1,4 +1,4 @@
-import { faCog, faRobot, faSignOutAlt, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faBriefcase, faCog, faRoad, faRobot, faSignOutAlt, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useContext } from 'react';
 import { Button, Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
@@ -28,9 +28,18 @@ const Header = () => {
             <Nav.Link as={Link} to="/">Home</Nav.Link>
             {currentUser ? (
               <>
-                <Nav.Link as={Link} to="/dashboard">Dashboard</Nav.Link>
                 <Nav.Link as={Link} to="/jobs">Jobs & Internships</Nav.Link>
                 <Nav.Link as={Link} to="/resources">Resources</Nav.Link>
+                <Nav.Link as={Link} to="/roadmap-generator" className="d-flex align-items-center">
+                  <FontAwesomeIcon icon={faRoad} className="me-1" />
+                  Roadmaps
+                </Nav.Link>
+                <Nav.Link as={Link} to="/career-advisor" className="d-flex align-items-center">
+                  <FontAwesomeIcon icon={faBriefcase} className="me-1" />
+                  Career Advisor
+                </Nav.Link>
+
+                
                 <NavDropdown title={
                   <span>
                     <FontAwesomeIcon icon={faUser} className="me-1" />

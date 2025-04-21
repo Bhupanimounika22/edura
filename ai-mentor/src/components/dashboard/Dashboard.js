@@ -1,14 +1,14 @@
 import {
-    faCalendarAlt,
-    faCheckCircle,
-    faComments,
-    faLock,
-    faRoad,
-    faRobot
+  faCalendarAlt,
+  faCheckCircle,
+  faComments,
+  faLock,
+  faRoad,
+  faRobot
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useContext, useEffect, useState } from 'react';
-import { Badge, Button, Card, Col, Container, ListGroup, ProgressBar, Row } from 'react-bootstrap';
+import { Alert, Badge, Button, Card, Col, Container, ListGroup, ProgressBar, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthContext';
 import './Dashboard.css';
@@ -26,15 +26,21 @@ const Dashboard = () => {
   const [recommendedResources, setRecommendedResources] = useState([]);
   const [progress, setProgress] = useState({});
   const [showAIChat, setShowAIChat] = useState(false);
+  const [isDemo, setIsDemo] = useState(false);
   
   useEffect(() => {
-    // In a real app, you would fetch this data from an API
-    // For demo purposes, we'll use the imported dummy data
-    setActiveRoadmaps(roadmaps.slice(0, 2));
-    setRecommendedJobs(jobs.slice(0, 3));
-    setRecommendedResources(resources.slice(0, 3));
-    setProgress(learningProgress);
-  }, []);
+    // Check if user is a demo user
+    if (currentUser && currentUser.role === 'demo') {
+      setIsDemo(true);
+    } else {
+      // In a real app, you would fetch this data from an API
+      // For demo purposes, we'll use the imported dummy data
+      setActiveRoadmaps(roadmaps.slice(0, 2));
+      setRecommendedJobs(jobs.slice(0, 3));
+      setRecommendedResources(resources.slice(0, 3));
+      setProgress(learningProgress);
+    }
+  }, [currentUser]);
   
   const toggleAIChat = () => {
     setShowAIChat(!showAIChat);
@@ -42,6 +48,20 @@ const Dashboard = () => {
   
   return (
     <Container className="py-5">
+      {/* Demo User Alert */}
+      {isDemo && (
+        <Alert variant="info" className="mb-4">
+          <Alert.Heading>Demo Mode Dashboard</Alert.Heading>
+          <p>
+            You're viewing a limited version of the Dashboard in demo mode. Some features and data may be restricted.
+          </p>
+          <hr />
+          <p className="mb-0">
+            For the full experience, please <Link to="/register" className="alert-link">create an account</Link>.
+          </p>
+        </Alert>
+      )}
+      
       {/* Welcome Section */}
       <Row className="mb-4">
         <Col>

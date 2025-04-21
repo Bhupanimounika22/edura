@@ -1,0 +1,42 @@
+.career-advisor .example-badge {
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 1px solid #e9ecef;
+}
+
+.career-advisor .example-badge:hover {
+  background-color: #4776E6 !important;
+  color: white !important;
+  transform: translateY(-2px);
+}
+
+.icon-wrapper {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(71, 118, 230, 0.1) 0%, rgba(142, 84, 233, 0.1) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.career-advisor h3 {
+  color: #4776E6;
+  border-bottom: 2px solid rgba(71, 118, 230, 0.2);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.career-advisor h4.h5 {
+  color: #4776E6;
+  margin-bottom: 1rem;
+}
+
+.career-advisor .card {
+  transition: all 0.3s ease;
+}
+
+.career-advisor .card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}

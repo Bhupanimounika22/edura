@@ -1,0 +1,124 @@
+/* RoadmapGenerator.css */
+
+.role-card {
+  border: 2px solid transparent;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  height: 100%;
+}
+
+.role-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.role-card.selected {
+  border-color: #007bff;
+  background-color: rgba(0, 123, 255, 0.05);
+}
+
+.role-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: rgba(0, 123, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  font-size: 1.5rem;
+  color: #007bff;
+}
+
+.interest-tag {
+  display: inline-block;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 20px;
+  padding: 0.3rem 0.8rem;
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.interest-tag:hover {
+  background-color: #e9ecef;
+}
+
+.interest-tag.selected {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: white;
+}
+
+.experience-level-selector {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.experience-level-card {
+  flex: 1;
+  text-align: center;
+  padding: 1rem;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 0 0.5rem;
+}
+
+.experience-level-card:hover {
+  background-color: #f8f9fa;
+}
+
+.experience-level-card.selected {
+  border-color: #007bff;
+  background-color: rgba(0, 123, 255, 0.05);
+}
+
+.experience-level-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  color: #6c757d;
+}
+
+.experience-level-card.selected .experience-level-icon {
+  color: #007bff;
+}
+
+.roadmap-generator-form {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.form-step {
+  margin-bottom: 2rem;
+}
+
+.form-step-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.step-number {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #007bff;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+  font-weight: bold;
+}
+
+.step-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+}

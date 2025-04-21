@@ -1,5 +1,5 @@
-import { faEnvelope, faEye, faEyeSlash, faLock } from "@fortawesome/free-solid-svg-icons";
 import { faGoogle, faLinkedin } from "@fortawesome/free-brands-svg-icons";
+import { faEnvelope, faEye, faEyeSlash, faLock } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useContext, useState } from "react";
 import { Alert, Button, Card, Col, Container, Form, Row } from "react-bootstrap";
@@ -13,6 +13,8 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showDemoOptions, setShowDemoOptions] = useState(false);
+  const [selectedDemoProfile, setSelectedDemoProfile] = useState(0);
   
   const { login, demoLogin } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -39,21 +41,30 @@ const Login = () => {
     }
   };
 
+  // Demo profile options
+  const demoProfiles = [
+    { name: 'Mounika', title: 'Frontend Developer', level: 'Beginner' },
+    { name: 'Sai', title: 'Data Scientist', level: 'Intermediate' },
+    { name: 'Mohana', title: 'UX Designer', level: 'Advanced' },
+    { name: 'Naimish', title: 'DevOps Engineer', level: 'Intermediate' },
+    { name: 'Mounika', title: 'Mobile Developer', level: 'Beginner' }
+  ];
+
   const handleDemoLogin = () => {
-    // Create a demo user with all necessary information
-    const userData = {
-      id: "1",
-      name: "Demo User",
-      email: "demo@example.com",
-      role: "user",
-      isDemo: true
-    };
-    
-    // Log in the demo user using the demoLogin function
-    demoLogin(userData);
-    
-    // Navigate to dashboard
-    navigate("/dashboard");
+    if (!showDemoOptions) {
+      // Show demo options first
+      setShowDemoOptions(true);
+    } else {
+      // Use the demoLogin function with the selected profile index
+      demoLogin(selectedDemoProfile);
+      
+      // Navigate to home page for demo users
+      navigate("/");
+    }
+  };
+  
+  const handleSelectDemoProfile = (index) => {
+    setSelectedDemoProfile(index);
   };
 
   return (
@@ -152,13 +163,60 @@ const Login = () => {
                 </Row>
                 
                 <div className="text-center mb-4">
-                  <Button 
-                    variant="success" 
-                    onClick={handleDemoLogin}
-                    className="w-100"
-                  >
-                    Try Demo Account
-                  </Button>
+                  {showDemoOptions ? (
+                    <>
+                      <h5 className="mb-3">Select a Demo Profile</h5>
+                      <div className="demo-profiles-container mb-3">
+                        {demoProfiles.map((profile, index) => (
+                          <Card 
+                            key={index} 
+                            className={`demo-profile-card mb-2 ${selectedDemoProfile === index ? 'selected' : ''}`}
+                            onClick={() => handleSelectDemoProfile(index)}
+                            style={{ 
+                              cursor: 'pointer', 
+                              border: selectedDemoProfile === index ? '2px solid #007bff' : '1px solid #dee2e6',
+                              padding: '10px'
+                            }}
+                          >
+                            <div className="d-flex align-items-center">
+                              <div className="demo-profile-avatar me-3" style={{ 
+                                width: '40px', 
+                                height: '40px', 
+                                borderRadius: '50%', 
+                                backgroundColor: `hsl(${index * 60}, 70%, 60%)`,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                color: 'white',
+                                fontWeight: 'bold'
+                              }}>
+                                {profile.name.charAt(0)}
+                              </div>
+                              <div className="text-start">
+                                <h6 className="mb-0">{profile.name}</h6>
+                                <small className="text-muted">{profile.title} • {profile.level}</small>
+                              </div>
+                            </div>
+                          </Card>
+                        ))}
+                      </div>
+                      <Button 
+                        variant="success" 
+                        onClick={handleDemoLogin}
+                        className="w-100"
+                      >
+                        Continue with Selected Profile
+                      </Button>
+                    </>
+                  ) : (
+                    <Button 
+                      variant="success" 
+                      onClick={handleDemoLogin}
+                      className="w-100"
+                    >
+                      Try Demo Account
+                    </Button>
+                  )}
                 </div>
               </Form>
             </Card.Body>
